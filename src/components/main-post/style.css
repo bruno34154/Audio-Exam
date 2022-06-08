@@ -1,0 +1,27 @@
+.container-mainpost {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 5vh;
+  margin-left: 10%;
+  margin-right: 10%;
+  background-color: #6441a5;
+  box-shadow: 9px 9px 9px rgba(50, 50, 50, 0.77);
+  transition: 0.5s;
+}
+.title-mainpost {
+  color: #fff;
+}
+.description-mainpost {
+  margin: 10px 10px;
+  color: #fff;
+  text-align: justify;
+}
+.hero-mainpost {
+  margin-top: 10px;
+  height: 20 vh;
+  width: 40vw;
+}
+.container-mainpost:hover {
+  transform: scale(1.1);
+}
