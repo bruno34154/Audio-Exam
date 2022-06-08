@@ -43,6 +43,7 @@
 .img-area-file {
   margin-left: 35%;
   margin-top: 50px;
+  padding: 10px 0px;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -50,6 +51,7 @@
   background-color: #6441a5;
   width: 30%;
   border-radius: 10px;
+  transition: 0.5s;
 }
 .button-file:hover {
   color: #6441a5;
