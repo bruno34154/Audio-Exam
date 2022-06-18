@@ -28,3 +28,5 @@ o projeto ainda não posui deploy mas você pode testa-lo usando os seguintes pa
 * 10 - os arquivos criados irão aparecer na pasta do projeto
 
 ## Shots da aplicação: 
+
+<p><img src="https://github.com/bruno34154/Audio-Exam/blob/master/image%201.jpeg" width="500 px" height="300 px"/> <img src="https://github.com/bruno34154/Audio-Exam/blob/master/image%202.jpeg" width="500 px" height="300 px"/></p>
