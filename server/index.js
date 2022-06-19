@@ -9,6 +9,7 @@ const gtts = require("gtts");
 const path = require("path");
 
 let text;
+let namefile;
 
 app.use((req, res, next) => {
   res.header("Access-Control-Allow-Origin", "*");
@@ -29,7 +30,8 @@ const storagemulter = multer.diskStorage({
   },
   filename: (req, file, cb) => {
     // arquivos upados no servidor recebem o nome de documento.pdf
-    cb(null, "documento.pdf");
+    namefile = Date.now() + "documento.pdf";
+    cb(null, namefile);
   },
 });
 app.get("/api", (req, res) => {
@@ -40,7 +42,7 @@ const upload = multer({ storage: storagemulter });
 app.post("/uploadfile", upload.single("pdf-file"), async (req, res) => {
   //recebe o upload nessa rota
   if (req.file) {
-    let dataBuffer = await fs.readFileSync("public_files/documento.pdf"); //se o arquivo chegou no servidor esperar pelo upload e armazena o caminho do arquivo na variavel
+    let dataBuffer = await fs.readFileSync("public_files/" + namefile); //se o arquivo chegou no servidor esperar pelo upload e armazena o caminho do arquivo na variavel
     pdfParse(dataBuffer).then((result) => {
       text = result.text; // transforma o pdf em texto e armazena na variavel
       var voice = new gtts(text, "pt");
