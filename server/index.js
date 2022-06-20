@@ -4,9 +4,11 @@ const multer = require("multer");
 const PORT = process.env.PORT || 3001;
 const app = express();
 const fs = require("fs");
-const pdfParse = require("pdf-parse");
+const crawler = require("crawler-request");
 const gtts = require("gtts");
 const path = require("path");
+const aws = require("aws-sdk");
+const multerS3 = require("multer-s3-v2");
 
 let text;
 let namefile;
@@ -22,29 +24,36 @@ app.use((req, res, next) => {
   next();
 });
 app.use(express.static(path.resolve(__dirname, "../client/build")));
-const storagemulter = multer.diskStorage({
-  //configura upload
-  destination: (req, file, cb) => {
-    //manda arquivo para pasta public_files
-    cb(null, "public_files");
-  },
-  filename: (req, file, cb) => {
-    // arquivos upados no servidor recebem o nome de documento.pdf
-    namefile = Date.now() + "documento.pdf";
-    cb(null, namefile);
-  },
+
+aws.config.update({
+  accessKeyId: "AKIAR7TNGBQ5QCOUHSXT",
+  secretAccessKey: "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",
+  region: "sa-east-1",
 });
+const s3 = new aws.S3();
+const upload = multer({
+  storage: multerS3({
+    s3,
+    bucket: "audioexam-multer",
+    acl: "public-read",
+    key(req, file, cb) {
+      namefile = Date.now() + "documento.pdf";
+      cb(null, namefile);
+    },
+  }),
+});
+
 app.get("/api", (req, res) => {
   //rota para teste de servidor
   res.json({ message: "o servidor se comunicando" });
 });
-const upload = multer({ storage: storagemulter });
+
 app.post("/uploadfile", upload.single("pdf-file"), async (req, res) => {
   //recebe o upload nessa rota
   if (req.file) {
-    let dataBuffer = await fs.readFileSync("public_files/" + namefile); //se o arquivo chegou no servidor esperar pelo upload e armazena o caminho do arquivo na variavel
-    pdfParse(dataBuffer).then((result) => {
-      text = result.text; // transforma o pdf em texto e armazena na variavel
+    crawler(req.file.location).then(async (result) => {
+      console.log(result.text);
+      text = await result.text; // transforma o pdf em texto e armazena na variavel
       var voice = new gtts(text, "pt");
       var outputFilePath = __dirname + Date.now() + " documento.mp3";
       voice.save(outputFilePath); // cria arquivo de audio com o texto extraido do pdf
