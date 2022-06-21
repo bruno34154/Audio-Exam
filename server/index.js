@@ -9,6 +9,7 @@ const gtts = require("gtts");
 const path = require("path");
 const aws = require("aws-sdk");
 const multerS3 = require("multer-s3-v2");
+let filemp3;
 
 let text;
 let namefile;
@@ -43,11 +44,6 @@ const upload = multer({
   }),
 });
 
-app.get("/api", (req, res) => {
-  //rota para teste de servidor
-  res.json({ message: "o servidor se comunicando" });
-});
-
 app.post("/uploadfile", upload.single("pdf-file"), async (req, res) => {
   //recebe o upload nessa rota
   if (req.file) {
@@ -55,8 +51,10 @@ app.post("/uploadfile", upload.single("pdf-file"), async (req, res) => {
       console.log(result.text);
       text = await result.text; // transforma o pdf em texto e armazena na variavel
       var voice = new gtts(text, "pt");
-      var outputFilePath = __dirname + Date.now() + " documento.mp3";
-      voice.save(outputFilePath); // cria arquivo de audio com o texto extraido do pdf
+      var outputFilePath = Date.now() + " documento.mp3";
+      voice.save(outputFilePath);
+
+      // cria arquivo de audio com o texto extraido do pdf
       res.download(outputFilePath); // faz dowload do arquivo de audio no cliente
     });
 
