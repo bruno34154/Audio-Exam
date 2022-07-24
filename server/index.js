@@ -9,6 +9,7 @@ const gtts = require("gtts");
 const path = require("path");
 const aws = require("aws-sdk");
 const multerS3 = require("multer-s3-v2");
+const PdfParse = require("pdf-parse");
 let filemp3;
 
 let text;
@@ -26,12 +27,12 @@ app.use((req, res, next) => {
 });
 app.use(express.static(path.resolve(__dirname, "../client/build")));
 
-aws.config.update({
+/*aws.config.update({
   accessKeyId: "AKIAR7TNGBQ5QCOUHSXT",
   secretAccessKey: "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",
   region: "sa-east-1",
 });
-const s3 = new aws.S3();
+/*const s3 = new aws.S3();
 const upload = multer({
   storage: multerS3({
     s3,
@@ -42,12 +43,27 @@ const upload = multer({
       cb(null, namefile);
     },
   }),
+});*/
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "./public_files");
+  },
+  filename: (req, file, cb) => {
+    namefile = Date.now() + "document.pdf";
+    cb(null, namefile);
+  },
 });
+
+const upload = multer({ storage: storage });
 
 app.post("/uploadfile", upload.single("pdf-file"), async (req, res) => {
   //recebe o upload nessa rota
   if (req.file) {
-    crawler(req.file.location).then(async (result) => {
+    let databuffer = fs.readFileSync(__dirname + "/public_files/" + namefile);
+
+    /*crawler(req.file.location)*/
+    PdfParse(databuffer).then(async (result) => {
       console.log(result.text);
       text = await result.text; // transforma o pdf em texto e armazena na variavel
       var voice = new gtts(text, "pt");
@@ -55,7 +71,7 @@ app.post("/uploadfile", upload.single("pdf-file"), async (req, res) => {
       voice.save(outputFilePath);
 
       // cria arquivo de audio com o texto extraido do pdf
-      res.download(outputFilePath); // faz dowload do arquivo de audio no cliente
+      //res.download(path.resolve("./", outputFilePath)); // faz dowload do arquivo de audio no cliente
     });
 
     return res.json({
