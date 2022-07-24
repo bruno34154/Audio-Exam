@@ -27,23 +27,6 @@ app.use((req, res, next) => {
 });
 app.use(express.static(path.resolve(__dirname, "../client/build")));
 
-/*aws.config.update({
-  accessKeyId: "AKIAR7TNGBQ5QCOUHSXT",
-  secretAccessKey: "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",
-  region: "sa-east-1",
-});
-/*const s3 = new aws.S3();
-const upload = multer({
-  storage: multerS3({
-    s3,
-    bucket: "audioexam-multer",
-    acl: "public-read",
-    key(req, file, cb) {
-      namefile = Date.now() + "documento.pdf";
-      cb(null, namefile);
-    },
-  }),
-});*/
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
